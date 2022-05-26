@@ -1,0 +1,720 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>LOCAL BAZAR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/main.css" rel="stylesheet" type="text/css"/>
+    <link rel="icon" href="img/icon.png" type="image/x-icon">
+    <script>
+/*-----------variables------------*/
+var productCard;
+var subManu;
+var logIn = 0;
+var logInForm = 0;
+var UName;
+var refCode;
+var totalProduct = 0;
+var totalPrice = 0;
+
+/*--------function for creating product card-------*/
+function productCardMaker(url, refCode, brandsName, productName, price, off){
+	productCard = "<div class='product_show'><img src='"+ url +"'/><div class='product_brand'><h5>" + brandsName + "</h5><span>" + productName + "</span></div><div class='product_show_btn'><p><a style='float: left;' class='btn_small' onClick='productView(&quot;" + url + "&quot;, &quot;" + refCode + "&quot;, &quot;" + price + "&quot;);'>&nbsp;VIEW&nbsp;</a><a style='float: right;' class='btn_small' onClick='addToShoppingBag(&quot;" + url + "&quot;, &quot;" + refCode + "&quot;, &quot;" + price + "&quot;);'>ADD TO BAG</a></p></div><p>৳ 450 <del>৳ " + price + "</del> (off " + off + "%)</p></div>";
+}
+
+function addToShoppingBag(url, refCode, price){
+    if(logIn == 1){
+       totalProduct++;
+       totalPrice += Number(price);
+       document.getElementById("totalProduct").innerHTML = totalProduct;
+       document.getElementById("totalPrice").innerHTML = "৳ " + totalPrice;
+       document.getElementById("totalProduct").style.display = "block";
+       document.getElementById("shoppingBagProducts").innerHTML += "<tr><td><img src='" + url + "' class='shoppingCardImg'/></td><td>" + refCode + "</td><td>৳" + price + "</td></tr>";
+    }else{
+       showLoginForm(1);
+    }
+}
+function productView(url, refCode, price){
+	document.getElementById("menProdects").style.display = "none";
+	document.getElementById("menProdectView").style.display = "block";
+        document.getElementById("womenProdects").style.display = "none";
+	document.getElementById("womenProdectView").style.display = "block";
+        document.getElementById("kidsProdects").style.display = "none";
+	document.getElementById("kidsProdectView").style.display = "block";
+	document.getElementById("memProdectImd").innerHTML = "<img src=" + url +" width='100%'/>";
+        document.getElementById("womemProdectImd").innerHTML = "<img src=" + url +" width='100%'/>";
+        document.getElementById("kidsProdectImd").innerHTML = "<img src=" + url +" width='100%'/>";
+        document.getElementById("viewPCode1").innerHTML = refCode;
+        document.getElementById("viewPCode2").innerHTML = refCode;
+        document.getElementById("viewPCode3").innerHTML = refCode;
+        document.getElementById("viewPAddToBag1").innerHTML = "<a class='btn_small' onClick='addToShoppingBag(&quot;" + url + "&quot;, &quot;" + refCode + "&quot;, &quot;" + price + "&quot;);'>ADD TO BAG</a>";
+        document.getElementById("viewPAddToBag2").innerHTML = "<a class='btn_small' onClick='addToShoppingBag(&quot;" + url + "&quot;, &quot;" + refCode + "&quot;, &quot;" + price + "&quot;);'>ADD TO BAG</a>";
+        document.getElementById("viewPAddToBag3").innerHTML = "<a class='btn_small' onClick='addToShoppingBag(&quot;" + url + "&quot;, &quot;" + refCode + "&quot;, &quot;" + price + "&quot;);'>ADD TO BAG</a>";
+}
+function hideViewProduct(){
+	document.getElementById("menProdects").style.display = "block";
+	document.getElementById("menProdectView").style.display = "none";
+        document.getElementById("womenProdects").style.display = "block";
+	document.getElementById("womenProdectView").style.display = "none";
+        document.getElementById("kidsProdects").style.display = "block";
+	document.getElementById("kidsProdectView").style.display = "none";
+}
+</script>
+<script src="js/database.js"></script>
+</head>
+
+<body>
+<!-------------------------page header---------------------------->
+	<header id="main_header" class="continer">
+       	<div class="col_lg_5">
+        	<img src="img/logo.png" alt="Technova Group" id="main_logo"/>
+       	</div>
+    	<div class="col_lg_3" style="border-right: 1px solid #999;">
+            <div style="float:right;">
+                <p style="background-image:url(img/icons/mobile.png); background-position: 3% center;" class="header_contact">+8801736771101</p>
+                <p style="background-image:url(img/icons/email.png);" class="header_contact">info@technovagroup.com.hk</p>
+            </div>
+        </div>
+        <div class="col_lg_2" style="padding: 1.5% 0px 0px 1%;">
+        	<div style="position: relative; display: inline-block;" class="login">
+                    <span style="cursor: pointer;"><img src="img/icons/login.png" alt="Log In" class="icon_bg" style="vertical-align:middle;"/>&nbsp;<span id="userName">YOUR ACCOUNT</span></span>
+                <div class="login_content">
+                	<h3>Your Account</h3>
+					<p>Access account and manage orders</p><br/>
+                    <p style="padding: 0px 10%;">
+                        <a style="float: left;" class="btn_medium" onClick = "showLoginForm(1);">Sign up</a>
+                        <a style="float: right;" class="btn_medium" onClick = "showLoginForm(2);">login</a></p>
+                    
+                    <script>
+                        function showLoginForm(form){
+                            logInForm = form;
+                            if(logInForm == 2){
+                                document.getElementById("loginUserName").style.display = 'none';
+                                document.getElementById("loginGender").style.display = 'none';
+                                document.getElementById("loginFormHeading").innerHTML = "Login to LocalBazar";
+                                document.getElementById("registerBtn").innerHTML = "LOG IN";
+                            }else{
+                                document.getElementById("loginUserName").style.display = 'block';
+                                document.getElementById("loginGender").style.display = 'block';
+                                document.getElementById("loginFormHeading").innerHTML = "Signup with LocalBazar";
+                                document.getElementById("registerBtn").innerHTML = "REGISTER";
+                            }
+                            document.getElementById('logInForm').style.display = 'block';
+                        }
+                    </script> 
+                </div>
+            </div>
+            &nbsp; &nbsp;
+            <div style="display: inline; position: relative;" id="shoppingIcon">
+                <img src="img/icons/shopping_cart.png" alt="Shopping Cart" class="icon_bg"  style="vertical-align:middle;"/>
+                <span style="font-size: 11px; padding: 2px 6px; line-height: 1em; border-radius: 7px; color: #fff; background-color:rgba(254, 180, 160, 1); position: absolute; right: -8px; top: 0px; display: none;" id="totalProduct">0</span>
+                <div id="shopping_cart">
+                    <h2>Shopping Cart</h2><br>
+                    <table style="width: 100%;">
+                        
+                        <thead>
+                          <tr>
+                            <th>Product</th>
+                            <th>Code</th>
+                            <th>Price</th>
+                          </tr>  
+                        </thead>
+                        <tbody id="shoppingBagProducts"></tbody>
+                        <tfoot>
+                            <tr style=" padding-top: 5px;">
+                                <td colspan="2" style="font-size: 14px; font-weight: bold;">Total: </td>
+                                <td id="totalPrice"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <p class="registerBtn">BUY</p> 
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </header>
+<!-------------------------nav bar---------------------------->   
+    <nav id="main_nav" class="continer">
+    	<ul>
+        	<li class="page_link"><a class="dropbtn"><img src="img/icons/home.png" alt="HOME" onClick="pageShow('home');"/></a></li>
+            <li class="page_link">
+            	<a class="dropbtn" onClick="pageShow('men')"><script>document.write(items["mainCategory"][0]);</script></a>
+                <div class="nav_dropdown_manu">
+                	<script>
+						for(i = 0; i< items["subCategory"]["men"].length; i++){
+							subManu = "<a onClick='menSubPageShow(&quot;" + i + "&quot;)'>" + items['subCategory']['men'][i] + "</a>";
+							document.write(subManu);
+						}
+						function menSubPageShow(subPage){
+							pageShow('men');
+                                                        menProductBySubCategory(subPage);
+						}
+                    </script>
+                </div>
+            </li>
+            <li class="page_link">
+            	<a class="dropbtn" onClick="pageShow('women')"><script>document.write(items["mainCategory"][1]);</script></a>
+                <div class="nav_dropdown_manu">
+                	<script>
+						for(i = 0; i< items["subCategory"]["women"].length; i++){
+							subManu = "<a onClick='womenSubPageShow(&quot;" + i + "&quot;)'>" + items['subCategory']['women'][i] + "</a>";
+							document.write(subManu);
+						}
+						function womenSubPageShow(subPage){
+							pageShow('women');
+                                                        womenProductBySubCategory(subPage);
+						}
+                    </script>
+                </div>
+            </li>
+            <li class="page_link">
+            	<a class="dropbtn" onClick="pageShow('kids')"><script>document.write(items["mainCategory"][2]);</script></a>
+                <div class="nav_dropdown_manu">
+                	<script>
+                            for(i = 0; i< items["subCategory"]["kids"].length; i++){
+							subManu = "<a onClick='kidsSubPageShow(&quot;" + i + "&quot;)'>" + items['subCategory']['kids'][i] + "</a>";
+							document.write(subManu);
+						}
+						function kidsSubPageShow(subPage){
+							pageShow('kids');
+                                                        kidsProductBySubCategory(subPage);
+						}
+                    </script>
+                </div>
+            </li>
+            <li class="page_link">
+            	<a class="dropbtn" onClick="pageShow('contacts')"><script>document.write(items["mainCategory"][3]);</script></a>
+            </li>
+		</ul>
+        <div style="float:right; background-color: #FFFFFF; width: 30%; height: 26px; margin: 8px 10px 0px 0px; padding: 0px; position: relative; border-radius: 6px;">
+        	<select style="height: 100%; width: 30%; margin:0px; position: absolute; top: 0; left:0; padding-left: 5px; box-sizing: border-box; border-radius: 6px 0px 0px 6px; border: 1px solid #888;">
+            	<option value="all">All</option>
+                <option value="men">Men</option>
+                <option value="women">Women</option>
+                <option value="kids">Kids</option>
+            </select>
+            <input type="text" placeholder="Search..." style="height: 100%; width: 60%; padding-left: 10px; box-sizing: border-box; position: absolute; top: 0; left: 30%;"/>
+            <img src="img/icons/search2.png" alt="Search" class="search_btn"/>
+        </div>
+    </nav>
+
+<!-------------------------page section---------------------------->
+    <div id="main_section">
+    	<!-------------------------home page main section---------------------------->
+        <div id="home_content">
+            <div id="main_slideShow">
+                <div id="SlideContiner" style="width:100%; position: relative;">
+                    <img src="img/slide/men_slide.jpg" style="width: 100%; float:left; visibility:hidden;"/>
+                    <img src="img/slide/men_slide.jpg" class="slide" style="left:0px;"/>
+                    <img src="img/slide/woman_slide.png" class="slide" style="left:100%;"/>
+                    <img src="img/slide/kids_slide.jpg" class="slide" style="left:200%;"/>
+                    <img src="img/slide/banner01.jpg" class="slide" style="left:200%;"/>
+                </div>
+                <div style="width: 5%; height: 500px; background-color: rgba(100, 100, 100, 0.5); position: absolute; left: 0px; opacity: 0.5;"></div>
+                <div style="width: 5%; height: 500px; background-color: rgba(100, 100, 100, 0.8); position: absolute; right: 0px; opacity: 0.5;"></div>
+            </div>
+            
+            <div class="continer">
+            	<!-------------home page MEN product showcase------------->
+                <div class="section_continer">
+                    <div class="vartical_nav">
+                        <h2 class="text-uppercase"><script>document.write(items["mainCategory"][0]);</script></h2>
+                        <ul>
+                        <script>
+                            for(i=0; i<items["subCategory"]["men"].length; i++){
+                                document.write("<li>" + items["subCategory"]["men"][i] + "</li>");
+                            }
+                        </script>
+                        </ul>
+                    </div>
+                    <div class="products_showcas">
+                        <script>
+                            for(i=0; i<4; i++){
+								productCardMaker(products["men"][i]["url"], products["men"][i]["refCode"], products["men"][i]["brandsName"], products["men"][i]["productName"], products["men"][i]["price"], products["men"][i]["off"]);
+                                document.write(productCard);
+                            }
+                        </script>
+                        <div class="clear"></div>
+                    </div>
+                	<div class="clear"></div>
+                </div>
+                <!-------------home page WOMEN product showcase------------->
+                <div class="section_continer">
+                    <div class="products_showcas">
+                        <script>
+                            for(i=0; i<4; i++){
+								productCardMaker(products["women"][i]["url"], products["women"][i]["refCode"], products["women"][i]["brandsName"], products["women"][i]["productName"], products["women"][i]["price"], products["women"][i]["off"]);
+                                document.write(productCard);
+                            }
+                        </script>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="vartical_nav">
+                        <h2 class="text-uppercase"><script>document.write(items["mainCategory"][1]);</script></h2>
+                        <ul>
+                        <script>
+                            for(i=0; i<items["subCategory"]["women"].length; i++){
+                                document.write("<li>" + items["subCategory"]["women"][i] + "</li>");
+                            }
+                        </script>
+                        </ul>
+                    </div>
+                	<div class="clear"></div>
+                </div>
+                <!-------------home page KIDS product showcase------------->
+                <div class="section_continer">
+                    <div class="vartical_nav">
+                        <h2 class="text-uppercase"><script>document.write(items["mainCategory"][0]);</script></h2>
+                        <ul>
+                        <script>
+                            for(i=0; i<items["subCategory"]["men"].length; i++){
+                                document.write("<li>" + items["subCategory"]["men"][i] + "</li>");
+                            }
+                        </script>
+                        </ul>
+                    </div>
+                    <div class="products_showcas">
+                        <script>
+                            for(i=0; i<4; i++){
+								productCardMaker(products["men"][i]["url"], products["men"][i]["refCode"], products["men"][i]["brandsName"], products["men"][i]["productName"], products["men"][i]["price"], products["men"][i]["off"]);
+                                document.write(productCard);
+                            }
+                        </script>
+                        <div class="clear"></div>
+                    </div>
+                	<div class="clear"></div>
+                </div>
+            </div>
+        </div>
+
+<!-------------------------men page main section---------------------------->
+        <div id="men_content">
+        	<div class="continer">
+            	<br/>
+        		<!-------------MEN page product showcase------------->
+                <div class="section_continer">
+                	<div class="sidebar">
+                        <div>
+                            <h2 class="text-uppercase"><script>document.write(items["mainCategory"][0]);</script></h2>
+                            <ul>
+                            <script>
+                                for(i=0; i<items["subCategory"]["men"].length; i++){
+                                    document.write("<li onClick='menProductBySubCategory(" + i + ");'>" + items["subCategory"]["men"][i] + "</li>");
+                                }
+                            </script>
+                            </ul>
+                        </div><br/>
+                        <div>
+                            <h2 class="text-uppercase">BRANDS</h2>
+                            <ul>
+                            <script>
+                                for(i=0; i<items["brands"].length; i++){
+                                    document.write("<li>" + items["brands"][i] + "</li>");
+                                }
+                            </script>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="products_showcas" id="menProdects">
+                    	<h1 style="padding: 15px 30px;">MEN<span id="man_subCategory" style="color: rgba(105,105,105,1.00);"></span></h1>
+                        <p style="padding: 0px 30px 20px;">Technova offers you online shopping place along with exclusive collection of men's lifestyle apparel within affordable price range. Casual shirts, formal shirts, T-shirts, polo T-shirt, jeans, gabardine, trousers, Punjabi etc. are among the popular choice in this category.</p>
+                        <div id="men_products_showcas">
+                        <script>
+                            for(i=0; i < products["men"].length; i++){
+								productCardMaker(products["men"][i]["url"], products["men"][i]["refCode"], products["men"][i]["brandsName"], products["men"][i]["productName"], products["men"][i]["price"], products["men"][i]["off"]);
+                                document.write(productCard);
+                            }
+                        </script>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="products_showcas" id="menProdectView">
+                        <div id="memProdectImd" style="width: 59%; padding: 10px; box-sizing: border-box; height: auto; float:left;"><img src="img/products/men/CS1001.jpg" width="100%"/></div>
+                        <div style="width: 40%; float:right; padding: 10px; box-sizing: border-box;">
+                            <div style="width: 100%;"><a class="cancelBtn" onclick="hideViewProduct();">X</a></div><br><br>
+                            <h2 id="viewPCode1">MEN</h2>
+                            <h4>Difference of Opinion Navy Printed T-shirt</h4>
+                            <p>৳ 450(15% OFF)</p><br>
+                            <h4>10% Instant Cashback on PhonePe</h4>
+                            <p style="color:#777;">Get10% Instant Cashback max upto Rs.125 on first PhonePe payment</p><br>
+                            <h4>Free shipping available</h4>
+                            <p style="color:#777;">For limited period only.</p><br><br>
+                            <h4 style="border-bottom: 1px solid #666;">SELECT SIZE</h4><br>
+                            <p id="sizes"><span>S</span><span>M</span><span>L</span><span>XL</span><span>XXL</span></p><br>
+                            <p id="viewPAddToBag1" style="border-top: 1px solid #555; padding: 25px 0px 0px; font-size: 18px;"></p>
+                         </div>     
+                    </div>
+                    <div class="clear"></div>
+                </div>
+        	</div>
+        </div>
+
+<!-------------------------women page main section---------------------------->
+        <div id="women_content">
+        	<div class="continer">
+            	<br/>
+        		<!-------------WOMEN page product showcase------------->
+                <div class="section_continer">
+                	<div class="sidebar">
+                        <div>
+                            <h2 class="text-uppercase"><script>document.write(items["mainCategory"][1]);</script></h2>
+                            <ul>
+                            <script>
+                                for(i=0; i<items["subCategory"]["women"].length; i++){
+                                    document.write("<li onClick='womenProductBySubCategory(" + i + ");'>" + items["subCategory"]["women"][i] + "</li>");
+                                }
+                            </script>
+                            </ul>
+                        </div><br/>
+                        <div>
+                            <h2 class="text-uppercase">BRANDS</h2>
+                            <ul>
+                            <script>
+                                for(i=0; i<items["brands"].length; i++){
+                                    document.write("<li>" + items["brands"][i] + "</li>");
+                                }
+                            </script>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="products_showcas" id="womenProdects">
+                    	<h1 style="padding: 15px 30px;">WOMEN<span id="woman_subCategory" style="color: rgba(105,105,105,1.00);"></span></h1>
+                        <p style="padding: 0px 30px 20px;">Technova's Women’s clothing section contains fashionable attires, like; Salwar and churidar, shirts &tops, jeans & leggings , fotuas&kurtis ,lawn , sarees ,inner garments .</p>
+                        <div id="women_products_showcas">
+						<script>
+                            for(i=0; i < products["women"].length; i++){
+								productCardMaker(products["women"][i]["url"], products["women"][i]["refCode"], products["women"][i]["brandsName"], products["women"][i]["productName"], products["women"][i]["price"], products["women"][i]["off"]);
+                                document.write(productCard);
+                            }
+                        </script>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                	
+                    <div class="products_showcas" id="womenProdectView">
+                        <div id="womemProdectImd" style="width: 59%; padding: 10px; box-sizing: border-box; height: auto; float:left;"><img src="img/products/men/CS1001.jpg" width="100%"/></div>
+                        <div style="width: 40%; float:right; padding: 10px; box-sizing: border-box;">
+                            <div style="width: 100%;"><a class="cancelBtn" onclick="hideViewProduct();">X</a></div><br><br>
+                            <h2 id="viewPCode2">WOMEN</h2>
+                            <h4>Difference of Opinion Navy Printed T-shirt</h4>
+                            <p>৳ 450(15% OFF)</p><br>
+                            <h4>10% Instant Cashback on PhonePe</h4>
+                            <p style="color:#777;">Get10% Instant Cashback max upto Rs.125 on first PhonePe payment</p><br>
+                            <h4>Free shipping available</h4>
+                            <p style="color:#777;">For limited period only.</p><br><br>
+                            <h4 style="border-bottom: 1px solid #666;">SELECT SIZE</h4><br>
+                            <p id="sizes"><span>S</span><span>M</span><span>L</span><span>XL</span><span>XXL</span></p><br>
+                            <p id="viewPAddToBag2" style="border-top: 1px solid #555; padding: 25px 0px 0px; font-size: 18px;"></p>
+                         </div>     
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                        
+        	</div>
+        </div>
+
+<!-------------------------kids page main section---------------------------->
+        <div id="kids_content">
+        	<div class="continer">
+            	<br/>
+        		<!-------------KIDS page product showcase------------->
+                <div class="section_continer">
+                	<div class="sidebar">
+                        <div>
+                            <h2 class="text-uppercase"><script>document.write(items["mainCategory"][2]);</script></h2>
+                            <ul>
+                            <script>
+                                for(i=0; i<items["subCategory"]["kids"].length; i++){
+                                    document.write("<li onClick='kidsProductBySubCategory(" + i + ");'>" + items["subCategory"]["kids"][i] + "</li>");
+                                }
+                            </script>
+                            </ul>
+                        </div><br/>
+                        <div>
+                            <h2 class="text-uppercase">BRANDS</h2>
+                            <ul>
+                            <script>
+                                for(i=0; i<items["brands"].length; i++){
+                                    document.write("<li>" + items["brands"][i] + "</li>");
+                                }
+                            </script>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="products_showcas" id="kidsProdects">
+                    	<h1 style="padding: 15px 30px;">KIDS<span id="kids_subCategory" style="color: rgba(105,105,105,1.00);"></span></h1>
+                        <p style="padding: 0px 30px 20px;">Technova offers you online shopping place along with exclusive collection of men's lifestyle apparel within affordable price range. Casual shirts, formal shirts, T-shirts, polo T-shirt, jeans, gabardine, trousers, Punjabi etc. are among the popular choice in this category.</p>
+                        <div id="kids_products_showcas">
+                        <script>
+                            for(i=0; i < products["kids"].length; i++){
+								productCardMaker(products["kids"][i]["url"], products["kids"][i]["refCode"], products["kids"][i]["brandsName"], products["kids"][i]["productName"], products["kids"][i]["price"], products["kids"][i]["off"]);
+                                document.write(productCard);
+                            }
+                        </script>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="products_showcas" id="kidsProdectView">
+                        <div id="kidsProdectImd" style="width: 59%; padding: 10px; box-sizing: border-box; height: auto; float:left;"><img src="img/products/men/CS1001.jpg" width="100%"/></div>
+                        <div style="width: 40%; float:right; padding: 10px; box-sizing: border-box;">
+                            <div style="width: 100%;"><a class="cancelBtn" onclick="hideViewProduct();">X</a></div><br><br>
+                            <h2 id="viewPCode3">KIDS</h2>
+                            <h4>Difference of Opinion Navy Printed T-shirt</h4>
+                            <p>৳ 450(15% OFF)</p><br>
+                            <h4>10% Instant Cashback on PhonePe</h4>
+                            <p style="color:#777;">Get10% Instant Cashback max upto Rs.125 on first PhonePe payment</p><br>
+                            <h4>Free shipping available</h4>
+                            <p style="color:#777;">For limited period only.</p><br><br>
+                            <h4 style="border-bottom: 1px solid #666;">SELECT SIZE</h4><br>
+                            <p id="sizes"><span>S</span><span>M</span><span>L</span><span>XL</span><span>XXL</span></p><br>
+                            <p id="viewPAddToBag3" style="border-top: 1px solid #555; padding: 25px 0px 0px; font-size: 18px;"></p>
+                         </div>     
+                    </div>
+                    <div class="clear"></div>
+                </div>
+        	</div>
+        </div>
+<!-------------------------contacts page main section---------------------------->
+         <div id="contacts_content">
+        	<div class="continer">
+            	<br/>
+        		<!-------------contacts page product showcase------------->
+                <div class="section_continer">
+                	<div class="sidebar">
+                        <div>
+                            <h2 style="font-size: 18px;">Address</h2>
+            <p><b>Head Office:</b> Unit-11 BD, Wing Hong Center, 18 Wing Hong Street, Lai Chi Kok, Kowloon, Hongkong</p><br/>
+            <p><b>BD Office:</b> 213/4/D, Shaplahousing, West Agargaon, Mirpur, Dhaka-1207, Bangladesh</p><br/>
+            <p><b>Information: </b>info@technovagroup.com.hk</p>
+            <ul style="list-style:none;">
+            	<li><img src="img/icons/facebook.png" alt="facebook" class="footer_socal_link"/></li>
+                <li><img src="img/icons/linkedin.png" alt="linkedin" class="footer_socal_link"/></li>
+                <li><img src="img/icons/whatchapp.png" alt="whatchapp" class="footer_socal_link"/></li>
+                <li><img src="img/icons/towter.png" alt="towter" class="footer_socal_link"/></li>
+			</ul>
+            <div class="clear"></div>
+                        </div><br/>
+                        <div>
+                            <div id="GoogleMap">
+                                <h2 class="" style="border: none; padding-bottom:  0px;">Maps</h2>
+                                <iframe width="100%;" height="300px" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7302.119724945549!2d90.35425382500996!3d23.780882556215744!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c0be89363e87%3A0x3795036c15355c82!2sKallyanpur%2C+Dhaka!5e0!3m2!1sen!2sbd!4v1498284854379" frameborder="0"  allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="products_showcas" id="womenProdects" style="padding:  20px; box-sizing: border-box;">
+                        <img src="img/about_us.png" style="width: 100%;"/><br><br>
+                        <p style="line-height: 1.7em"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<strong>Locabazar.com</strong> is the ultimate online shopping destination for Bangladesh offering completely hassle-free shopping experience through secure and trusted gateways. We offer garments based quality products at cheap price. 
+                            Localbazar showcases products from clothing. Our collection combines the latest in fashion trends as well as the all-time favorites. We, at Localbazar, have all that you need under one umbrella.<br>
+                             &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;In tune with the vision Digital Bangladesh, Locabazar.com opens the doorway for everybody to shop over the Internet. We constantly update with lot of new products, services and special offers. We provide on-time delivery of products and quick resolution of any concerns.<br>
+ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;We provide our customers with memorable online shopping experience. Our dedicated Localbazar quality assurance team works round the clock to personally make sure the right packages reach on time. You can choose whatever you like. We deliver it right at your address across Bangladesh. Our services are at your doorsteps all the time. Get the best products with the best online shopping experience every time. You will enjoy online shopping here!</p>
+                        <br><br>
+                        <img src="img/terms_banner.jpg" style="width: 100%;"/><br><br>
+                        <p style="line-height: 1.7em"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<strong>Locabazar.com</strong> is the ultimate online shopping destination for Bangladesh offering completely hassle-free shopping experience through secure and trusted gateways. We offer garments based quality products at cheap price. <strong>Localbazar</strong> showcases products from clothing. Our collection combines the latest in fashion trends as well as the all-time favorites. We, at Localbazar, have all that you need under one umbrella.</p><br>
+                        <ol style="list-style-image: url('img/icons/listBullet.png'); list-style-position: inside; ">
+                            <li>In tune with the vision Digital Bangladesh, Locabazar.com opens the doorway for everybody to shop over the Internet. We constantly update with lot of new products, services and special offers.</li><br>
+                            <li>We provide on-time delivery of products and quick resolution of any concerns.</li><br>
+                            <li>We provide our customers with memorable online shopping experience. Our dedicated Localbazar quality assurance team works round the clock to personally make sure the right packages reach on time.</li><br>
+                            <li>You can choose whatever you like. We deliver it right at your address across Bangladesh. </li><br>
+                            <li>Our services are at your doorsteps all the time. Get the best products with the best online shopping experience every time. You will enjoy online shopping here!</li><br>
+                        </ol>
+                    </div>
+                    <div class="clear"></div>
+                </div>
+                        
+        	</div>        
+         </div>
+        <br/>
+    </div>
+    
+<!-------------------------page footer---------------------------->
+	<footer id="main_footer" class="continer">
+    	<div style="width: 40%;">
+            <h2>TERMS & CONDITIONS</h2>
+            <p>The Company Local, established in 2002 is a specialized manufacturer of garments related materials & accessories. Over the years. we have diversified our wings to markets across the Globe. 
+    The company currently has six offices based in Bangladesh, Indonesia, Vietnam, China, USA along with the head office situated in Hong Kong, through which it runs its operations successfully. The markets that the company is currently engaged in are the USA, Canada, Dubai, UK, India, Indonesia, Vietnam and Bangladesh.</p>
+            <button class="footer_socal_link" style="width:100px; padding: 4px 0px; color:rgba(20,20,20,1.00); font-size:14px; cursor: pointer; float:right; border: 1px solid rgba(70,70,70,1.00);">Read More</button>
+		</div>
+        <div style="width: 20%;">
+        <h2 style="text-align:center;">Links</h2>
+            <ul style="text-align:center;">
+                <li class="page_link" onClick="pageShow('home')">Home</li>
+                <li class="page_link" onClick="pageShow('men')">Men</li>
+                <li class="page_link" onClick="pageShow('women')">Women</li>
+                <li class="page_link" onClick="pageShow('kids')">Kids</li>
+                <li class="page_link" onClick="pageShow('contacts')">Contacts</li>
+            </ul>
+        </div>
+        <div style="width: 40%;">
+        	<h2>Address & Contacts</h2>
+            <p><b>Head Office:</b> Unit-11 BD, Wing Hong Center, 18 Wing Hong Street, Lai Chi Kok, Kowloon, Hongkong</p><br/>
+            <p><b>BD Office:</b> 213/4/D, Shaplahousing, West Agargaon, Mirpur, Dhaka-1207, Bangladesh</p><br/>
+            <p><b>Information: </b>info@technovagroup.com.hk</p>
+            <ul style="list-style:none;">
+            	<li><img src="img/icons/facebook.png" alt="facebook" class="footer_socal_link"/></li>
+                <li><img src="img/icons/linkedin.png" alt="linkedin" class="footer_socal_link"/></li>
+                <li><img src="img/icons/whatchapp.png" alt="whatchapp" class="footer_socal_link"/></li>
+                <li><img src="img/icons/towter.png" alt="towter" class="footer_socal_link"/></li>
+			</ul>
+		</div>.   
+    </footer>
+    <div style="padding: 20px 0px 30px; background-color:rgba(30,30,30,1.00); color:rgba(210,210,210,1.00); font-size: 14px;
+    text-align:center;">Copyright © 2018 &nbsp; &nbsp;BITM Batch-60</div>
+
+    
+    <div id="logInForm">
+        <div style="width: 330px; padding: 40px 30px; background-color: rgba(255, 255, 255,1); margin: 80px auto; text-align:center;">
+        	<form>
+                    <h2 id="loginFormHeading">Signup with LocalBazar</h2>
+            <p style="font-size: 13px; color: #555; padding: 35px 0px 15px;">EASILY USING</p>
+            <div>
+                <div class="logInIcon" style="background-image:url(img/icons/facebookC.png); float:left;">FACEBOOK</div>
+                <div class="logInIcon" style="background-image:url(img/icons/googleC.png); float:right;">GOOGLE</div>
+            </div>
+            <p style="font-size: 13px; color: #555; clear:both; padding: 35px 0px 15px;">- OR USING EMAIL -</p>
+            <div id="logInInput">
+            	<input class="logInInput" type="text" placeholder="Your Name" style="border-radius: 12px 12px 0px 0px;" id="loginUserName"/>
+            	<input class="logInInput" type="mail" placeholder="Your Email Address" style="border-radius: 12px 12px 0px 0px;" id="loginEmail">
+                <input class="logInInput" type="password" placeholder="Password"  style="border-radius: 0px 0px 10px 10px;" id="loginPassword">
+                <div class="logInInput" style="border-radius: 0px 0px 10px 10px; border: none;" id="loginGender">
+                    <input type="radio" name="gender"/>Male &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                    <input type="radio" name="gender"/>Female
+                </div>
+            </div>
+            <p class="registerBtn" id="registerBtn" onclick="userLogIn();">REGISTER</p>
+            
+            <script>
+                function userLogIn(){
+                    if(logInForm == 2){
+                        var loopLength = logIn["userName"].length;
+                        for(i = 0; i < loopLength; i++){
+                            UName = logIn["userName"][i];
+                            if(document.getElementById("loginEmail").value == logIn["email"][i] && document.getElementById("loginPassword").value == logIn["password"][i]){
+                                logIn = 1;
+                                document.getElementById("userName").innerHTML = UName;
+                                document.getElementById('logInForm').style.display = 'none';
+                            }
+                        }
+                    }else{
+                        if(document.getElementById("loginEmail").value != "" && document.getElementById("loginPassword").value != "" && document.getElementById("loginUserName").value != ""){
+                            logIn = 1;
+                            document.getElementById("userName").innerHTML = document.getElementById("loginUserName").value;
+                            document.getElementById('logInForm').style.display = 'none';
+                        }
+                    }
+                }
+            </script>
+            <div>
+                <button class="logInFormTextBtn" type="reset" value="Reset" style="float: left; background-color: #fff; border: none;">Reset</button>
+                <p class="logInFormTextBtn" style="float: right;" onClick = "document.getElementById('logInForm').style.display = 'none';">Cancel</p>
+            </div>
+            </form>
+            <div class="clear"></div>
+        </div>
+    </div>
+    
+   
+    
+<script>
+	/*-----------page navigition and styling----------*/
+function pageShow(page){
+	hideViewProduct();
+	var pageLink = document.getElementsByClassName("dropbtn");
+	var presenrPageNo = 0;
+	document.getElementById("home_content").style.display = "none";
+	document.getElementById("men_content").style.display = "none";
+	document.getElementById("women_content").style.display = "none";
+	document.getElementById("kids_content").style.display = "none";
+	document.getElementById("contacts_content").style.display = "none";
+	for(i=0; i<pageLink.length; i++){
+		pageLink[i].style.color = "#333";
+		pageLink[i].style.backgroundColor = "rgba(255,255,255,0)";
+		pageLink[i].style.textShadow = "none";
+	}
+	if(page == "men"){
+		document.getElementById("men_content").style.display = "block";
+		presenrPageNo = 1;
+	}else if(page == "women"){
+		document.getElementById("women_content").style.display = "block";
+		presenrPageNo = 2;
+	}else if(page == "kids"){
+		document.getElementById("kids_content").style.display = "block";
+		presenrPageNo = 3;
+	}else if(page == "contacts"){
+		document.getElementById("contacts_content").style.display = "block";
+		presenrPageNo = 4;
+	}else{
+		document.getElementById("home_content").style.display = "block";
+		presenrPageNo = 0;
+	}
+	pageLink[presenrPageNo].style.color = "#fff";
+	pageLink[presenrPageNo].style.backgroundColor = "rgba(255,255,255,0.5)";
+	pageLink[presenrPageNo].style.textShadow = "0px 0px 3px #000000";
+}
+
+
+/*------------JavaScript for main Slide Show-------------*/
+	var slides = document.getElementsByClassName("slide");
+	var slideLefts = [0, 100, 200, -100];
+	var slideIntervel = setInterval(slideAnimation, 4000);
+	
+	function slideAnimation(){
+		for(i = 0; i < slides.length; i++){
+			if(slideLefts[i] == 200){slides[i].style.display = "block";}
+			slideLefts[i] -= 100;
+			if(slideLefts[i] == -200){
+				slideLefts[i] = 200;
+				slides[i].style.display = "none";
+			}
+			slides[i].style.left = slideLefts[i] + "%";	
+		}
+	}
+	
+	
+/*-------------show Product by SubCategory(MEN)------------*/
+function menProductBySubCategory(indx){
+	hideViewProduct();
+	document.getElementById("man_subCategory").innerHTML = "&nbsp;&gt;&nbsp;" + items["subCategory"]["men"][indx]; 
+	document.getElementById("men_products_showcas").innerHTML = "";
+	for(i=0; i < products["men"].length; i++){
+		if(products["men"][i]["subCategory"] == items["subCategory"]["men"][indx]){
+			productCardMaker(products["men"][i]["url"], products["men"][i]["refCode"], products["men"][i]["brandsName"], products["men"][i]["productName"], products["men"][i]["price"], products["men"][i]["off"]);
+			document.getElementById("men_products_showcas").innerHTML += productCard;
+		}else if(document.getElementById("men_products_showcas").innerHTML == "" && i == products["men"].length - 1){
+			document.getElementById("men_products_showcas").innerHTML = "&nbsp;&nbsp;&nbsp;Sorry! Product Not Found...";
+		}
+	}
+}
+
+/*-------------show Product by SubCategory(MEN)------------*/
+function womenProductBySubCategory(indx){
+	hideViewProduct();
+	document.getElementById("woman_subCategory").innerHTML = "&nbsp;&gt;&nbsp;" + items["subCategory"]["women"][indx]; 
+	document.getElementById("women_products_showcas").innerHTML = "";
+	for(i=0; i < products["women"].length; i++){
+		if(products["women"][i]["subCategory"] == items["subCategory"]["women"][indx]){
+			productCardMaker(products["women"][i]["url"], products["women"][i]["refCode"], products["women"][i]["brandsName"], products["women"][i]["productName"], products["women"][i]["price"], products["women"][i]["off"]);
+			document.getElementById("women_products_showcas").innerHTML += productCard;
+		}else if(document.getElementById("women_products_showcas").innerHTML == "" && i == products["women"].length - 1){
+			document.getElementById("women_products_showcas").innerHTML = "&nbsp;&nbsp;&nbsp;Sorry! Product Not Found...";
+		}
+	}
+}
+
+/*-------------show Product by SubCategory(KIDS)------------*/
+function kidsProductBySubCategory(indx){
+	hideViewProduct();
+	document.getElementById("kids_subCategory").innerHTML = "&nbsp;&gt;&nbsp;" + items["subCategory"]["kids"][indx]; 
+	document.getElementById("kids_products_showcas").innerHTML = "";
+	for(i=0; i < products["kids"].length; i++){
+		if(products["kids"][i]["subCategory"] == items["subCategory"]["kids"][indx]){
+			productCardMaker(products["kids"][i]["url"], products["kids"][i]["refCode"], products["kids"][i]["brandsName"], products["kids"][i]["productName"], products["kids"][i]["price"], products["kids"][i]["off"]);
+			document.getElementById("kids_products_showcas").innerHTML += productCard;
+		}else if(document.getElementById("kids_products_showcas").innerHTML == "" && i == products["kids"].length - 1){
+			document.getElementById("kids_products_showcas").innerHTML = "&nbsp;&nbsp;&nbsp;Sorry! Product Not Found...";
+		}
+	}
+}
+</script>
+
+</body>
+</html>
